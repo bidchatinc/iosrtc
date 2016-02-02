@@ -10,7 +10,7 @@ Absolutely **not**. This plugin exposes the WebRTC W3C API for Cordova iOS apps 
 
 Check the [release announcement](https://eface2face.com/blog/cordova-plugin-iosrtc.html) at the [eFace2Face](https://eface2face.com) site.
 
-**Resources:**
+**Resources**
 
 * [NPM package](https://www.npmjs.com/package/cordova-plugin-iosrtc).
 * [Public Google Group](https://groups.google.com/forum/#!forum/cordova-plugin-iosrtc) for questions and discussions about *cordova-plugin-iosrtc*.
@@ -30,9 +30,8 @@ $ cordova plugin add cordova-plugin-iosrtc
 
 ## Building
 
-This plugin needs [Swift 2.0](https://developer.apple.com/swift/) support so some steps are needed to get your project working with it. These steps are explained in the [Building](docs/Building.md) documentation, please check it.
-
-**IMPORTANT:** The currently bundled libWebRTC does not contain bitcode, so you'll need to disable it in your Xcode project settings.
+* [Building](docs/Building.md): Guidelines for building a Cordova iOS application including the *cordova-plugin-iosrtc* plugin.
+* [Building `libwebrtc`](docs/BuildingLibWebRTC.md): Guidelines for building Google's *libwebrtc* with modifications needed by the *cordova-plugin-iosrtc* plugin.
 
 
 ## Usage
@@ -106,9 +105,11 @@ Again, there is no real video attached to the `<video>` element so some peropert
 Read the full [documentation](docs/index.md) in the *docs* folder.
 
 
-## Demo application
+## Demo Application
 
 Check our [iOSRTCApp](https://github.com/eface2face/iOSRTCApp) (Google's [AppRTC](https://apprtc.appspot.com/) adapted to Cordova iOS with pure HTML5/JavaScript and *cordova-plugin-iosrtc*).
+
+*NOTE:* The demo app is currently unmaintained and it may just fail.
 
 
 ## Who Uses It
@@ -137,7 +138,33 @@ Methods such as `play()`, `pause()` are not implemented. In order to pause a vid
 
 ## Changelog
 
-(since version 1.2.8)
+
+#### Version 2.2.2
+
+* Update `libwebrtc` to revision 11063 so `MediaStream` events (`onaddtrack` and `onremovetrack`) work again ([issue #95](https://github.com/eface2face/cordova-plugin-iosrtc/issues/95)).
+
+#### Version 2.2.1
+
+* `getUserMedia()`: Fire `errback` if given video constraints are not satisfied.
+
+
+#### Version 2.2.0
+
+* Move from `getMediaDevices()` to `enumerateDevices()`.
+* Implement video constraints in `getUserMedia()`: `deviceId`, `width.min`, `width.max`, `height.min`, `height.max`, `frameRate`, `frameRate.min`, `frameRate.max`).
+* Update deps and build on Node >= 4.
+
+
+#### Version 2.1.0
+
+* Update *libwebrtc* to latest revision (rev 10800).
+* Enble iOS native H264 codec.
+
+
+#### Version 2.0.2
+
+* Enable CSS padding (thanks to @saghul) ([pull request #89](https://github.com/eface2face/cordova-plugin-iosrtc/issues/89)).
+
 
 #### Version 2.0.1
 
@@ -145,7 +172,7 @@ Methods such as `play()`, `pause()` are not implemented. In order to pause a vid
 
 #### Version 2.0.0
 
-* Swift 2.0 is here! Credits to @saghul for his [Pull Request](https://github.com/eface2face/cordova-plugin-iosrtc/pull/70).
+* Swift 2.0 is here! Credits to @saghul for his [pull request](https://github.com/eface2face/cordova-plugin-iosrtc/pull/70).
 * `extra/hooks/iosrtc-swift-support.js`: Set `BUILD_VERSION` to 7.0.
 
 #### Version 1.4.5
