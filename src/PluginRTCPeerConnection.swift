@@ -1,7 +1,7 @@
 import Foundation
 
 
-class PluginRTCPeerConnection : NSObject, RTCPeerConnectionDelegate, RTCSessionDescriptionDelegate, RTCStatsDelegate {
+class PluginRTCPeerConnection : NSObject, RTCPeerConnectionDelegate, RTCSessionDescriptionDelegate {
 	var rtcPeerConnectionFactory: RTCPeerConnectionFactory
 	var rtcPeerConnection: RTCPeerConnection!
 	var pluginRTCPeerConnectionConfig: PluginRTCPeerConnectionConfig
@@ -15,7 +15,7 @@ class PluginRTCPeerConnection : NSObject, RTCPeerConnectionDelegate, RTCSessionD
 	var onCreateDescriptionFailureCallback: ((error: NSError) -> Void)!
 	var onSetDescriptionSuccessCallback: (() -> Void)!
 	var onSetDescriptionFailureCallback: ((error: NSError) -> Void)!
-    var onGetStatsCallback: ((array: NSArray) -> Void)!
+
 
 	init(
 		rtcPeerConnectionFactory: RTCPeerConnectionFactory,
@@ -33,6 +33,11 @@ class PluginRTCPeerConnection : NSObject, RTCPeerConnectionDelegate, RTCSessionD
 		self.eventListener = eventListener
 		self.eventListenerForAddStream = eventListenerForAddStream
 		self.eventListenerForRemoveStream = eventListenerForRemoveStream
+	}
+
+
+	deinit {
+		NSLog("PluginRTCPeerConnection#deinit()")
 	}
 
 
@@ -295,7 +300,7 @@ class PluginRTCPeerConnection : NSObject, RTCPeerConnectionDelegate, RTCSessionD
 	) {
 		NSLog("PluginRTCPeerConnection#RTCDataChannel_setListener()")
 
-		let pluginRTCDataChannel = self.pluginRTCDataChannels[dcId]
+		weak var pluginRTCDataChannel = self.pluginRTCDataChannels[dcId]
 
 		if pluginRTCDataChannel == nil {
 			return;
@@ -307,23 +312,6 @@ class PluginRTCPeerConnection : NSObject, RTCPeerConnectionDelegate, RTCSessionD
 		)
 	}
 
-func getStats(
-        pluginMediaStreamTrack: PluginMediaStreamTrack?,
-        callback: (data: NSArray) -> Void,
-        errback: (error: NSError) -> Void
-        ) {
-            NSLog("PluginRTCPeerConnection#getStats()")
-
-            self.onGetStatsCallback = { (array: NSArray) -> Void in
-                callback(data: array)
-            }
-
-            if !self.rtcPeerConnection.getStatsWithDelegate(self,
-                mediaStreamTrack: pluginMediaStreamTrack?.rtcMediaStreamTrack,
-                statsOutputLevel: RTCStatsOutputLevelStandard) {
-                    errback(error: NSError(domain: "Cannot get peer connection stats.", code: -1, userInfo: nil))
-            }
-    }
 
 	func close() {
 		NSLog("PluginRTCPeerConnection#close()")
@@ -347,7 +335,7 @@ func getStats(
 			return
 		}
 
-		let pluginRTCDataChannel = self.pluginRTCDataChannels[dcId]
+		weak var pluginRTCDataChannel = self.pluginRTCDataChannels[dcId]
 
 		if pluginRTCDataChannel == nil {
 			return;
@@ -368,7 +356,7 @@ func getStats(
 			return
 		}
 
-		let pluginRTCDataChannel = self.pluginRTCDataChannels[dcId]
+		weak var pluginRTCDataChannel = self.pluginRTCDataChannels[dcId]
 
 		if pluginRTCDataChannel == nil {
 			return;
@@ -385,7 +373,7 @@ func getStats(
 			return
 		}
 
-		let pluginRTCDataChannel = self.pluginRTCDataChannels[dcId]
+		weak var pluginRTCDataChannel = self.pluginRTCDataChannels[dcId]
 
 		if pluginRTCDataChannel == nil {
 			return;
@@ -487,6 +475,7 @@ func getStats(
 		NSLog("PluginRTCPeerConnection | onaddstream")
 
 		let pluginMediaStream = PluginMediaStream(rtcMediaStream: rtcMediaStream)
+
 		pluginMediaStream.run()
 
 		// Let the plugin store it in its dictionary.
@@ -580,27 +569,4 @@ func getStats(
 			self.onSetDescriptionFailureCallback(error: error)
 		}
 	}
-
-    /**
-     * Methods inherited from RTCStatsDelegate
-     */
-
-    func peerConnection(peerConnection: RTCPeerConnection!,
-        didGetStats stats: [AnyObject]!) {
-
-            var jsStats = [NSDictionary]()
-
-            for stat in stats as NSArray {
-                var jsValues = Dictionary<String,String>()
-
-                for pair in stat.values as! [RTCPair] {
-                    jsValues[pair.key] = pair.value;
-                }
-
-                jsStats.append(["reportId": stat.reportId, "type": stat.type, "timestamp": stat.timestamp, "values": jsValues]);
-
-            }
-
-        self.onGetStatsCallback(array: jsStats);
-    }
 }
