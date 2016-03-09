@@ -24,8 +24,7 @@
 #import "RTCPeerConnectionFactory.h"
 #import "RTCSessionDescription.h"
 #import "RTCSessionDescriptionDelegate.h"
-#import "RTCStatsDelegate.h"
-#import "RTCStatsReport.h"
+
 #import "RTCTypes.h"
 #import "RTCVideoCapturer.h"
 #import "RTCVideoRenderer.h"
