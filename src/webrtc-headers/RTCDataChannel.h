@@ -82,12 +82,6 @@ typedef enum {
 - (void)channel:(RTCDataChannel*)channel
     didReceiveMessageWithBuffer:(RTCDataBuffer*)buffer;
 
-@optional
-
-// Called when the buffered amount has changed.
-- (void)channel:(RTCDataChannel*)channel
-    didChangeBufferedAmount:(NSUInteger)amount;
-
 @end
 
 // ObjectiveC wrapper for a DataChannel object.

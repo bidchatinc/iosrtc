@@ -31,7 +31,6 @@
 		</js-module>
 
 		<!-- WebRTC ObjetiveC headers -->
-		<header-file src="src/webrtc-headers/RTCAVFoundationVideoSource.h" />
 		<header-file src="src/webrtc-headers/RTCAudioSource.h" />
 		<header-file src="src/webrtc-headers/RTCAudioTrack.h" />
 		<header-file src="src/webrtc-headers/RTCDataChannel.h" />
@@ -95,7 +94,8 @@
 		<framework src="libc++.dylib" />
 		<framework src="libstdc++.dylib" />
 		<framework src="libsqlite3.0.dylib" />
-		<framework src="VideoToolbox.framework" />
+	    <!--<framework src="VideoToolbox.framework" />-->
+        
 
 		<!-- WebRTC static library -->
 		<source-file src="lib/libWebRTC-LATEST-Universal-Release.a" framework="true" />

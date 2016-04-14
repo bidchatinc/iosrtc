@@ -28,7 +28,6 @@
 #import <Foundation/Foundation.h>
 
 @class RTCAudioTrack;
-@class RTCConfiguration;
 @class RTCMediaConstraints;
 @class RTCMediaStream;
 @class RTCPeerConnection;
@@ -45,18 +44,13 @@
 + (void)initializeSSL;
 + (void)deinitializeSSL;
 
-// Create an RTCPeerConnection object. RTCPeerConnectionFactory will create
+// Create an RTCPeerConnection object.   RTCPeerConnectionFactory will create
 // required libjingle threads, socket and network manager factory classes for
 // networking.
 - (RTCPeerConnection *)
     peerConnectionWithICEServers:(NSArray *)servers
                      constraints:(RTCMediaConstraints *)constraints
                         delegate:(id<RTCPeerConnectionDelegate>)delegate;
-
-// Creates a peer connection using the default port allocator factory and identity service.
-- (RTCPeerConnection *)peerConnectionWithConfiguration:(RTCConfiguration *)configuration
-                                           constraints:(RTCMediaConstraints *)constraints
-                                              delegate:(id<RTCPeerConnectionDelegate>)delegate;
 
 // Create an RTCMediaStream named |label|.
 - (RTCMediaStream *)mediaStreamWithLabel:(NSString *)label;
