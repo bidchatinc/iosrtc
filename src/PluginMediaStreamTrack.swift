@@ -72,13 +72,19 @@ class PluginMediaStreamTrack : NSObject, RTCMediaStreamTrackDelegate {
 		self.rtcMediaStreamTrack.setEnabled(value)
 	}
 
-
-	func stop() {
-		NSLog("PluginMediaStreamTrack#stop() [kind:\(self.kind), id:\(self.id)]")
-
-		self.rtcMediaStreamTrack.setState(RTCTrackStateEnded)
-	}
-
+    // TODO: No way to stop the track.
+    // Check https://github.com/eface2face/cordova-plugin-iosrtc/issues/140
+    func stop() {
+        NSLog("PluginMediaStreamTrack#stop() [kind:%@, id:%@]", String(self.kind), String(self.id))
+        
+        NSLog("PluginMediaStreamTrack#stop() | stop() not implemented (see: https://github.com/eface2face/cordova-plugin-iosrtc/issues/140")
+        
+        // NOTE: There is no setState() anymore
+        // self.rtcMediaStreamTrack.setState(RTCTrackStateEnded)
+        
+        // Let's try setEnabled(false), but it also fails.
+        self.rtcMediaStreamTrack.setEnabled(false)
+    }
 
 	/**
 	 * Methods inherited from RTCMediaStreamTrackDelegate.
