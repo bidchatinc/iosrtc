@@ -3,7 +3,7 @@ import AVFoundation
 
 
 class PluginMediaStreamRenderer : NSObject, RTCEAGLVideoViewDelegate {
-	var webView: UIWebView
+	var webView: UIView
 	var eventListener: (data: NSDictionary) -> Void
 	var elementView: UIView
 	var videoView: RTCEAGLVideoView
@@ -13,15 +13,13 @@ class PluginMediaStreamRenderer : NSObject, RTCEAGLVideoViewDelegate {
 
 
 	init(
-		webView: UIWebView,
+		webView: UIView,
 		eventListener: (data: NSDictionary) -> Void
 	) {
 		NSLog("PluginMediaStreamRenderer#init()")
 
 		// The browser HTML view.
 		self.webView = webView
-        self.webView.opaque = false
-        self.webView.backgroundColor = UIColor.clearColor()
 		self.eventListener = eventListener
 		// The video element view.
 		self.elementView = UIView()
@@ -29,9 +27,12 @@ class PluginMediaStreamRenderer : NSObject, RTCEAGLVideoViewDelegate {
 		// It's placed over the elementView.
 		self.videoView = RTCEAGLVideoView()
 
-        self.elementView.userInteractionEnabled = false
+		self.webView.addSubview(self.elementView)
+		self.webView.bringSubviewToFront(self.elementView)
+
+		self.elementView.userInteractionEnabled = false
 		self.elementView.hidden = true
-		self.elementView.backgroundColor = UIColor.clearColor()
+		self.elementView.backgroundColor = UIColor.blackColor()
 		self.elementView.addSubview(self.videoView)
 		self.elementView.layer.masksToBounds = true
 
@@ -147,7 +148,10 @@ class PluginMediaStreamRenderer : NSObject, RTCEAGLVideoViewDelegate {
 		let clip = data.objectForKey("clip") as? Bool ?? true
 		let borderRadius = data.objectForKey("borderRadius") as? Float ?? 0
 
-		NSLog("PluginMediaStreamRenderer#refresh() [elementLeft:\(elementLeft), elementTop:\(elementTop), elementWidth:\(elementWidth), elementHeight:\(elementHeight), videoViewWidth:\(videoViewWidth), videoViewHeight:\(videoViewHeight), visible:\(visible), opacity:\(opacity), zIndex:\(zIndex), mirrored:\(mirrored), clip:\(clip), borderRadius:\(borderRadius)]")
+		NSLog("PluginMediaStreamRenderer#refresh() [elementLeft:%@, elementTop:%@, elementWidth:%@, elementHeight:%@, videoViewWidth:%@, videoViewHeight:%@, visible:%@, opacity:%@, zIndex:%@, mirrored:%@, clip:%@, borderRadius:%@]",
+			String(elementLeft), String(elementTop), String(elementWidth), String(elementHeight),
+			String(videoViewWidth), String(videoViewHeight), String(visible), String(opacity), String(zIndex),
+			String(mirrored), String(clip), String(borderRadius))
 
 		let videoViewLeft: Float = (elementWidth - videoViewWidth) / 2
 		let videoViewTop: Float = (elementHeight - videoViewHeight) / 2
@@ -182,19 +186,7 @@ class PluginMediaStreamRenderer : NSObject, RTCEAGLVideoViewDelegate {
 		}
 
 		self.elementView.alpha = CGFloat(opacity)
-        self.elementView.tag = Int(zIndex)
-        
-        var prevSiblingView: UIView?
-        for childView in (self.webView.superview?.subviews)!{
-            if(childView.tag > Int(zIndex)) {
-                prevSiblingView = childView;
-                break;
-            }
-        }
-        
-        if let view = prevSiblingView {
-            self.webView.superview?.insertSubview(self.elementView, belowSubview: view)
-        }
+		self.elementView.layer.zPosition = CGFloat(zIndex)
 
 		if !mirrored {
 			self.elementView.transform = CGAffineTransformIdentity
@@ -244,7 +236,8 @@ class PluginMediaStreamRenderer : NSObject, RTCEAGLVideoViewDelegate {
 
 
 	func videoView(videoView: RTCEAGLVideoView!, didChangeVideoSize size: CGSize) {
-		NSLog("PluginMediaStreamRenderer | video size changed [width:\(size.width), height:\(size.height)]")
+		NSLog("PluginMediaStreamRenderer | video size changed [width:%@, height:%@]",
+			String(size.width), String(size.height))
 
 		self.eventListener(data: [
 			"type": "videoresize",

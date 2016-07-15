@@ -22,8 +22,8 @@ Check the [release announcement](https://eface2face.com/blog/cordova-plugin-iosr
 In order to make this Cordova plugin run into a iOS application some requirements must be satisfied in both development computer and target devices:
 
 * Xcode >= 7.2.1
-* iOS >= 9 (run on lower versions at your own risk, but don't open issues)
-* `cordova-ios` 3.9.X (don't attempt to use 4.X)
+* iOS >= 9 (run on lower versions at your own risk, but don't report issues)
+* `cordova-ios` 4.X
 * No bitcode (built-in *libwebrtc* does not contain bitcode so you need to disable it in your Xcode project settings)
 
 
@@ -147,6 +147,26 @@ Methods such as `play()`, `pause()` are not implemented. In order to pause a vid
 
 
 ## Changelog
+
+
+#### Version 3.0.0
+
+* Upgrade to `cordova-ios` 4 ([PR #159](https://github.com/eface2face/cordova-plugin-iosrtc/issues/159) by @apparition47).
+
+* Swift: Use closure syntax for weak and unowned vars ([PR #160](https://github.com/eface2face/cordova-plugin-iosrtc/issues/160) by @oNaiPs).
+
+* Swift: Sanitize arguments given to `NSLog()` ([issue #157](https://github.com/eface2face/cordova-plugin-iosrtc/issues/157)).
+
+* `MediaDeviceInfo`: Add deprecated `facing` property ("front", "back" or "unknown") and update `kind` ("audio"/"video" become "audioinput"/"videoinput") ([issue #155](https://github.com/eface2face/cordova-plugin-iosrtc/issues/155)).
+
+* Update `libwebrtc` to revision 12558 ([issue #169](https://github.com/eface2face/cordova-plugin-iosrtc/issues/169)).
+
+
+#### Version 2.2.4
+
+* Fix crash ([issue #144](https://github.com/eface2face/cordova-plugin-iosrtc/issues/144)).
+
+* Update NPM dependencies.
 
 
 #### Version 2.2.3
