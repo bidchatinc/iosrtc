@@ -20,8 +20,7 @@ class PluginRTCPeerConnectionConfig {
 			let password = iceServer.objectForKey("credential") as? String ?? ""
 
 			if (url != nil) {
-				NSLog("PluginRTCPeerConnectionConfig#init() | adding ICE server [url:'%@', username:'%@', password:'******']",
-					String(url!), String(username))
+				NSLog("PluginRTCPeerConnectionConfig#init() | adding ICE server [url:\(url!), username:\(username), password:\(password)]")
 
 				self.iceServers.append(RTCICEServer(
 					URI: NSURL(string: url!),

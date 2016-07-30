@@ -25,7 +25,6 @@ function MediaDeviceInfo(data) {
 		id: {
 			value: data.deviceId
 		},
-		// Deprecated, but useful until there is an alternative
 		facing: {
 			value: ''
 		}
