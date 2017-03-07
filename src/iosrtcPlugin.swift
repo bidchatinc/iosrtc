@@ -24,6 +24,10 @@ class iosrtcPlugin : CDVPlugin {
 	override func pluginInitialize() {
 		NSLog("iosrtcPlugin#pluginInitialize()")
 
+		// Make the web view transparent
+		self.webView!.opaque = false
+		self.webView!.backgroundColor = UIColor.clearColor()
+
 		pluginMediaStreams = [:]
 		pluginMediaStreamTracks = [:]
 		pluginMediaStreamRenderers = [:]
@@ -337,25 +341,64 @@ class iosrtcPlugin : CDVPlugin {
 		}
 	}
 
+	func RTCPeerConnection_getStats(command: CDVInvokedUrlCommand) {
+		NSLog("iosrtcPlugin#RTCPeerConnection_getStats()")
+
+		let pcId = command.argumentAtIndex(0) as! Int
+		let pluginRTCPeerConnection = self.pluginRTCPeerConnections[pcId]
+
+		if pluginRTCPeerConnection == nil {
+			NSLog("iosrtcPlugin#RTCPeerConnection_getStats() | ERROR: pluginRTCPeerConnection with pcId=\(pcId) does not exist")
+			return;
+		}
+
+		var pluginMediaStreamTrack: PluginMediaStreamTrack?
+
+		if command.argumentAtIndex(1) != nil {
+			let trackId = command.argumentAtIndex(1) as! String
+			pluginMediaStreamTrack = self.pluginMediaStreamTracks[trackId]
+
+			if pluginMediaStreamTrack == nil {
+				NSLog("iosrtcPlugin#RTCPeerConnection_getStats() | ERROR: pluginMediaStreamTrack with id=\(trackId) does not exist")
+				return;
+			}
+		}
+
+		dispatch_async(self.queue) { [weak pluginRTCPeerConnection, weak pluginMediaStreamTrack] in
+			pluginRTCPeerConnection?.getStats(pluginMediaStreamTrack,
+				callback: { (array: NSArray) -> Void in
+					self.emit(command.callbackId,
+						result: CDVPluginResult(status: CDVCommandStatus_OK, messageAsArray: array as [AnyObject])
+						)
+				},
+				errback: { (error: NSError) -> Void in
+					self.emit(command.callbackId,
+						result: CDVPluginResult(status: CDVCommandStatus_ERROR, messageAsString: error.localizedDescription)
+						)
+				}
+			)
+		}
+	}
 
 	func RTCPeerConnection_close(command: CDVInvokedUrlCommand) {
 		NSLog("iosrtcPlugin#RTCPeerConnection_close()")
 
 		let pcId = command.argumentAtIndex(0) as! Int
-		var pluginRTCPeerConnection = self.pluginRTCPeerConnections[pcId]
+		let pluginRTCPeerConnection = self.pluginRTCPeerConnections[pcId]
 
 		if pluginRTCPeerConnection == nil {
 			NSLog("iosrtcPlugin#RTCPeerConnection_close() | ERROR: pluginRTCPeerConnection with pcId=%@ does not exist", String(pcId))
 			return;
 		}
 
-		dispatch_async(self.queue) {
-			pluginRTCPeerConnection!.close()
-			pluginRTCPeerConnection = nil
-		}
+		dispatch_async(self.queue) { [weak pluginRTCPeerConnection] in
+			if pluginRTCPeerConnection != nil {
+				pluginRTCPeerConnection!.close()
+			}
 
-		// Remove the pluginRTCPeerConnection from the dictionary.
-		self.pluginRTCPeerConnections[pcId] = nil
+			// Remove the pluginRTCPeerConnection from the dictionary.
+			self.pluginRTCPeerConnections[pcId] = nil
+		}
 	}
 
 
@@ -458,6 +501,66 @@ class iosrtcPlugin : CDVPlugin {
 
 		dispatch_async(self.queue) { [weak pluginRTCPeerConnection] in
 			pluginRTCPeerConnection?.RTCDataChannel_close(dcId)
+		}
+	}
+
+
+	func RTCPeerConnection_createDTMFSender(command: CDVInvokedUrlCommand) {
+		NSLog("iosrtcPlugin#RTCPeerConnection_createDTMFSender()")
+
+		let pcId = command.argumentAtIndex(0) as! Int
+		let dsId = command.argumentAtIndex(1) as! Int
+		let trackId = command.argumentAtIndex(2) as! String
+		let pluginRTCPeerConnection = self.pluginRTCPeerConnections[pcId]
+		let pluginMediaStreamTrack = self.pluginMediaStreamTracks[trackId]
+
+		if pluginRTCPeerConnection == nil {
+			NSLog("iosrtcPlugin#RTCPeerConnection_createDTMFSender() | ERROR: pluginRTCPeerConnection with pcId=%@ does not exist", String(pcId))
+			return;
+		}
+
+		if pluginMediaStreamTrack == nil {
+			NSLog("iosrtcPlugin#RTCPeerConnection_createDTMFSender() | ERROR: pluginMediaStreamTrack with id=%@ does not exist", String(trackId))
+			return;
+		}
+
+
+		dispatch_async(self.queue) { [weak pluginRTCPeerConnection] in
+			pluginRTCPeerConnection?.createDTMFSender(dsId,
+				track: pluginMediaStreamTrack!,
+				eventListener: { (data: NSDictionary) -> Void in
+					let result = CDVPluginResult(status: CDVCommandStatus_OK, messageAsDictionary: data as [NSObject : AnyObject])
+
+					// Allow more callbacks.
+					result.setKeepCallbackAsBool(true);
+					self.emit(command.callbackId, result: result)
+				}
+			)
+		}
+	}
+
+
+	func RTCPeerConnection_RTCDTMFSender_insertDTMF(command: CDVInvokedUrlCommand) {
+		NSLog("iosrtcPlugin#RTCPeerConnection_RTCDTMFSender_insertDTMF()")
+
+		let pcId = command.argumentAtIndex(0) as! Int
+		let dsId = command.argumentAtIndex(1) as! Int
+		let tones = command.argumentAtIndex(2) as! String
+		let duration = command.argumentAtIndex(3) as! Int
+		let interToneGap = command.argumentAtIndex(4) as! Int
+		let pluginRTCPeerConnection = self.pluginRTCPeerConnections[pcId]
+
+		if pluginRTCPeerConnection == nil {
+			NSLog("iosrtcPlugin#RTCPeerConnection_RTCDTMFSender_insertDTMF() | ERROR: pluginRTCPeerConnection with pcId=%@ does not exist", String(pcId))
+			return;
+		}
+
+		dispatch_async(self.queue) { [weak pluginRTCPeerConnection] in
+			pluginRTCPeerConnection?.RTCDTMFSender_insertDTMF(dsId,
+				tones: tones,
+				duration: duration,
+				interToneGap: interToneGap
+			)
 		}
 	}
 

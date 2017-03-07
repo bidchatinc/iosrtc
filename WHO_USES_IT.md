@@ -13,6 +13,15 @@ Below a list of companies using *cordova-plugin-iostc*:
 
 At [eFace2Face](https://eface2face.com) we use **cordova-plugin-iosrtc** for the iOS version of our application, becoming a web/mobile/tablet HTML5 hybrid solution.
 
+### [syrup](https://tastesyrup.com)
+
+![eface2face-picture](https://lh3.googleusercontent.com/yxnz9RQ5yaS-O5Xuh7E1KKn0aPCKDGCduexNtlbx1BVjEU-mU6xgbGTIbjRD68Ev9JSL8tdV4w=s141-h90-e365-rw)
+
+*Online Assistance Reinvented.*
+
+Provide a superior assistance experience to your clients with text and video chat and the ability to navigate simultaneously with your experts in the same page.
+
+At [syrup](https://tastesyrup.com) we use **cordova-plugin-iosrtc** for the iOS version of our agent application, becoming a web/mobile/tablet HTML5 hybrid solution.
 
 ### [OpenTokJS Cordova Plugin](https://github.com/aoberoi/cordova-plugin-opentokjs)
 
@@ -37,3 +46,9 @@ This is a community supported, open source project for enabling developers to us
 
 [Free](https://assistance.free.fr/facetofree/) (french major ISP) use WebRTC technology to provide video support for our customers on iPhone & iPad.
 
+### [Blink](http://icanblink.com)
+
+<img src="https://blink.sipthor.net/blink-ipad.jpg" width="400"/>
+
+[Blink for Mobile](https://itunes.apple.com/us/app/blink-for-mobile/id1100356948?ls=1&mt=8) uses WebRTC technology to provide a rich audio and video
+experience on mobile devices.
